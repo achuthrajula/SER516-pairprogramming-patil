@@ -1,4 +1,5 @@
 import sys
+import PySimpleGUI as sg
 
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
@@ -22,6 +23,27 @@ def main():
     git = GitProxy()
     current_committers = CurrentCommitters(file_system, committers)
     current_committers.register_observer(git)
+
+    sg.theme('DarkTeal9')
+    layout = [[sg.Text(
+        "Choose a number to execute the command: \n\n"
+        "1. help \n"
+        "2. init \n"
+        "3. add \n"
+        "4. get \n"
+        "5. set \n"
+        "6. remove \n"
+        "7. yeet"
+    )],
+        [sg.Input()],
+        [sg.Text(size=(40, 1), key='message')],
+        [sg.Button('Execute')], [sg.Button('Quit')]]
+
+    window = sg.Window('Guet', layout, finalize=True, resizable=True)
+
+    event, values = window.read()
+
+    print('The values obtained from the form are:', values[0])
 
     command_map = CommandMap()
     command_map.add_command('help', HelpCommandFactory(
