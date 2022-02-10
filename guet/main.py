@@ -37,36 +37,42 @@ def main():
     )],
         [sg.Input()],
         [sg.Text(size=(40, 1), key='message')],
-        [sg.Button('Execute')], [sg.Button('Quit')]]
+        [sg.Button('Execute', bind_return_key=True)], [sg.Button('Quit')]]
 
     window = sg.Window('Guet', layout, finalize=True, resizable=True)
 
-    event, values = window.read()
+    while True:
+        event, values = window.read()
 
-    print('The values obtained from the form are:', values[0])
+        command_map = CommandMap()
 
-    command_map = CommandMap()
-    command_map.add_command('help', HelpCommandFactory(
-        command_map, file_system), 'Display guet usage')
-    command_map.add_command('init', InitCommandFactory(
-        GitProxy(), file_system), 'Start guet tracking in the current repository')
-    command_map.add_command('add', AddCommandFactory(
-        file_system, committers, git), 'Add committer for tracking')
-    command_map.add_command('get', GetCommandFactory(
-        file_system, committers, current_committers), 'List information about committers')
-    command_map.add_command('set', SetCommittersCommand(
-        file_system, committers, current_committers, git), 'Set committers for current repository')
-    command_map.add_command('remove', RemoveCommandFactory(
-        file_system, committers), 'Remove committer')
-    command_map.add_command('yeet',
-                            YeetCommandFactory(file_system, git),
-                            'Remove guet configurations')
+        command_map.add_command('help', HelpCommandFactory(
+            command_map, file_system), 'Display guet usage')
+        command_map.add_command('init', InitCommandFactory(
+            GitProxy(), file_system), 'Start guet tracking in the current repository')
+        command_map.add_command('add', AddCommandFactory(
+            file_system, committers, git), 'Add committer for tracking')
+        command_map.add_command('get', GetCommandFactory(
+            file_system, committers, current_committers), 'List information about committers')
+        command_map.add_command('set', SetCommittersCommand(
+            file_system, committers, current_committers, git), 'Set committers for current repository')
+        command_map.add_command('remove', RemoveCommandFactory(
+            file_system, committers), 'Remove committer')
+        command_map.add_command('yeet',
+                                YeetCommandFactory(file_system, git),
+                                'Remove guet configurations')
+        command_map.add_command('test',
+                                HelpCommandFactory(command_map, file_system),
+                                'Remove guet configurations')
 
-    command_map.set_default(UnknownCommandFactory(command_map))
+        command_map.set_default(UnknownCommandFactory(command_map))
 
-    args = add_command_help_if_invalid_command_given(sys.argv[1:])
+        args = add_command_help_if_invalid_command_given(values[0].split())
 
-    command = command_map.get_command(args[0]).build()
-    command.play(args[1:])
+        command = command_map.get_command(args[0]).build()
+        command.play(args[1:])
 
-    file_system.save_all()
+        file_system.save_all()
+
+        if event == sg.WINDOW_CLOSED or event == 'Quit':
+            break
