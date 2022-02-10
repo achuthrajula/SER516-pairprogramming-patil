@@ -1,4 +1,3 @@
-import sys
 import PySimpleGUI as sg
 
 from guet.commands import CommandMap
@@ -61,13 +60,11 @@ def main():
         command_map.add_command('yeet',
                                 YeetCommandFactory(file_system, git),
                                 'Remove guet configurations')
-        command_map.add_command('test',
-                                HelpCommandFactory(command_map, file_system),
-                                'Remove guet configurations')
 
         command_map.set_default(UnknownCommandFactory(command_map))
 
         args = add_command_help_if_invalid_command_given(values[0].split())
+        print(args)
 
         command = command_map.get_command(args[0]).build()
         command.play(args[1:])
