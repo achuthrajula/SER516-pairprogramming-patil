@@ -1,3 +1,4 @@
+from pickle import NONE
 from typing import List
 
 from guet.committers import Committers2 as Committers
@@ -19,9 +20,19 @@ class GetCommittersAction(Action):
         if args[0] == 'all':
             committers = self.committers.all()
             pre_print = 'All committers'
+            if committers == []:
+                print('No committers')
+            else:
+                print(pre_print)
+                printer.print(committers)
         else:
             committers = self.current.get()
             pre_print = 'Current committers'
+            committers = list(filter(None, committers))
+            if committers == []:
+                print('No active committers')
+            else:
+                print(pre_print)
+                printer.print(committers)
 
-        print(pre_print)
-        printer.print(committers)
+        
