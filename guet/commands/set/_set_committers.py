@@ -20,10 +20,8 @@ class SetCommittersAction(Action):
         ) if c.initials in lowercase_args]
         self.current_committers.set(found)
         notification.notify(title="Guet",
-                            message=f"Remove: No committer exists with initials {args[0]}",
+                            message=f"set: Committers set to: {found}",
                             app_icon='',
                             timeout=10,
                             toast=True)
         printer = CommittersPrinter(initials_only=False)
-        print('Committers set to:')
-        printer.print(found)

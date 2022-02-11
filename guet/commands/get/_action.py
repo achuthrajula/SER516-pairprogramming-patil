@@ -1,5 +1,6 @@
 from pickle import NONE
 from typing import List
+from plyer import notification
 
 from guet.committers import Committers2 as Committers
 from guet.committers import CommittersPrinter, CurrentCommitters
@@ -21,18 +22,30 @@ class GetCommittersAction(Action):
             committers = self.committers.all()
             pre_print = 'All committers'
             if committers == []:
-                print('No committers')
+                notification.notify(title="Guet",
+                                    message="get: No committers",
+                                    app_icon='',
+                                    timeout=10,
+                                    toast=True)
             else:
-                print(pre_print)
-                printer.print(committers)
+                notification.notify(title="Guet",
+                                    message=f"get: {pre_print} {committers}",
+                                    app_icon='',
+                                    timeout=10,
+                                    toast=True)
         else:
             committers = self.current.get()
             pre_print = 'Current committers'
             committers = list(filter(None, committers))
             if committers == []:
-                print('No active committers')
+                notification.notify(title="Guet",
+                                    message="get: No active committers",
+                                    app_icon='',
+                                    timeout=10,
+                                    toast=True)
             else:
-                print(pre_print)
-                printer.print(committers)
-
-        
+                notification.notify(title="Guet",
+                                    message=f"guet: {pre_print} {committers}",
+                                    app_icon='',
+                                    timeout=10,
+                                    toast=True)
