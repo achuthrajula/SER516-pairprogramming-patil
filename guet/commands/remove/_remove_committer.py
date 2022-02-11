@@ -1,4 +1,5 @@
 from typing import List
+from plyer import notification
 
 from guet.steps.action import Action
 
@@ -11,6 +12,10 @@ class RemoveCommitterAction(Action):
     def execute(self, args: List[str]):
         committer = self.committers.by_initials(args[0])
         if not committer:
-            print(f'No committer exists with initials {args[0]}')
+            notification.notify(title="Guet",
+                                message=f"Remove: No committer exists with initials {args[0]}",
+                                app_icon='',
+                                timeout=10,
+                                toast=True)
         else:
             self.committers.remove(committer.initials)

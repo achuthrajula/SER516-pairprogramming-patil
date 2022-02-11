@@ -64,7 +64,6 @@ def main():
         command_map.set_default(UnknownCommandFactory(command_map))
 
         args = add_command_help_if_invalid_command_given(values[0].split())
-        print(args)
 
         command = command_map.get_command(args[0]).build()
         command.play(args[1:])
