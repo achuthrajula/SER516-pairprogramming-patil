@@ -23,9 +23,10 @@ class GetCommittersAction(Action):
             if committers == []:
                 print('No committers')
             else:
+                print(args[0])
                 print(pre_print)
                 printer.print(committers)
-        else:
+        elif args[0] == 'current':
             committers = self.current.get()
             pre_print = 'Current committers'
             committers = list(filter(None, committers))
@@ -34,5 +35,5 @@ class GetCommittersAction(Action):
             else:
                 print(pre_print)
                 printer.print(committers)
-
-        
+        else:
+            print('Enter a valid argument after guet get')
