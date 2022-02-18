@@ -13,8 +13,8 @@ class Check(Step):
             message = self._stop_message
             if message is None:
                 message = self.load_message(args)
-            print(message)
-            exit(1)
+            # print(message)
+            # exit(1)
 
     def should_stop(self, args: List[str]) -> bool:
         raise NotImplementedError()

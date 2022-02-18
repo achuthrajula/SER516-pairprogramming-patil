@@ -1,4 +1,5 @@
 from .action import Action
+from plyer import notification
 
 
 class PrintAction(Action):
@@ -7,4 +8,8 @@ class PrintAction(Action):
         self.message = message
 
     def execute(self, _):
-        print(self.message)
+        notification.notify(title="Guet",
+                            message="init: guet successfully started in this repository.",
+                            app_icon='',
+                            timeout=10,
+                            toast=True)
