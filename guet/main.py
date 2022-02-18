@@ -15,6 +15,7 @@ from guet.util import add_command_help_if_invalid_command_given
 from guet.util.errors import log_on_error
 
 
+
 @log_on_error
 def main():
     file_system = FileSystem()
@@ -22,9 +23,12 @@ def main():
     git = GitProxy()
     current_committers = CurrentCommitters(file_system, committers)
     current_committers.register_observer(git)
+    def TextLabel(text): return sg.Text(text+':', justification='r', size=(15,1))
+
 
     sg.theme('DarkTeal9')
-    layout = [[sg.Text(
+    # sg.theme_previewer()
+    layout = [[TextLabel('User Preferences'),sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],[sg.Text(
         "Choose a number to execute the command: \n\n"
         "1. help \n"
         "2. init \n"
@@ -39,7 +43,7 @@ def main():
         [sg.Button('Execute', bind_return_key=True)], [sg.Button('Quit')]]
 
     window = sg.Window('Guet', layout, finalize=True, resizable=True)
-
+                
     while True:
         event, values = window.read()
 
