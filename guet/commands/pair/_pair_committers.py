@@ -2,7 +2,7 @@ from typing import List
 from plyer import notification
 
 from guet.committers import Committers2 as Committers
-from guet.committers import CommittersPrinter, CurrentCommitters
+from guet.committers import CurrentCommitters
 from guet.steps.action import Action
 
 
@@ -27,17 +27,23 @@ class PairCommittersAction(Action):
 
             if pairing_strategy == "do":
                 final_strategy = strategies['do']
-
             else:
                 final_strategy = strategies['sj']
-            self.current_committers.set(found)
-
+            
+            for i in range(0,2):
+                self.committers.remove(found[i].initials)
+                for j in ["Driver",'Observer','Senior','Junior']:
+                    if j in found[i].name:
+                        found[i].name = found[i].name.replace(f"({j})","")
+                found[0].name = f"{found[0].name}({final_strategy[1]})"
+                found[1].name = f"{found[1].name}({final_strategy[0]})"
+                self.committers.add(found[i])
+            self.current_committers.set(found)    
             notification.notify(title="Guet",
-                                message=f"Current pairing strategy is {final_strategy[0]} and {final_strategy[1]}\n {final_strategy[0]}:{found[1].name} \n {final_strategy[1]}:{found[0].name}",
+                                message=f"Current pairing strategy is {final_strategy[0]} and {final_strategy[1]}\n {found[0].name} \n {found[1].name}",
                                 app_icon='',
-                                timeout=20,
+                                timeout=10,
                                 toast=True)
-            printer = CommittersPrinter(initials_only=False)
 
         else:
             notification.notify(title="Guet",

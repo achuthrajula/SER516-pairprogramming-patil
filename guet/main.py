@@ -63,8 +63,7 @@ def main():
             file_system, committers, current_committers, git), 'Set pairing strategy')
         command_map.add_command('remove', RemoveCommandFactory(
             file_system, committers), 'Remove committer')
-        command_map.add_command('yeet',
-                                YeetCommandFactory(file_system, git),
+        command_map.add_command('yeet', YeetCommandFactory(file_system, git),
                                 'Remove guet configurations')
         command_map.set_default(UnknownCommandFactory(command_map))
         
