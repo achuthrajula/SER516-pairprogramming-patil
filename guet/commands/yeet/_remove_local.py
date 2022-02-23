@@ -1,6 +1,7 @@
 from os.path import isdir
 from shutil import rmtree
 from typing import List
+from plyer import notification
 
 from guet.files import FileSystem
 from guet.git import Git, all_guet_hooks
@@ -19,6 +20,14 @@ class RemoveLocal(Action):
             hook.delete()
         if isdir(project_root().joinpath('.guet')):
             rmtree(project_root().joinpath('.guet'))
-            print('guet tracking removed from this repository')
+            notification.notify(title="Guet",
+                                message="Yeet: guet tracking removed from this repository",
+                                app_icon='',
+                                timeout=10,
+                                toast=True)
         else:
-            print('No local guet configurations for this project')
+            notification.notify(title="Guet",
+                                message="Yeet: No local guet configurations for this project",
+                                app_icon='',
+                                timeout=10,
+                                toast=True)

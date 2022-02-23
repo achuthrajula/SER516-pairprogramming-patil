@@ -1,4 +1,5 @@
 from typing import List
+from plyer import notification
 
 from guet.committers import Committers2 as Committers
 from guet.committers import CommittersPrinter, CurrentCommitters
@@ -15,8 +16,12 @@ class SetCommittersAction(Action):
 
     def execute(self, args: List[str]):
         lowercase_args = [arg.lower() for arg in args]
-        found = [c for c in self.committers.all() if c.initials in lowercase_args]
+        found = [c for c in self.committers.all(
+        ) if c.initials in lowercase_args]
         self.current_committers.set(found)
+        notification.notify(title="Guet",
+                            message=f"set: Committers set to: {found}",
+                            app_icon='',
+                            timeout=10,
+                            toast=True)
         printer = CommittersPrinter(initials_only=False)
-        print('Committers set to:')
-        printer.print(found)
