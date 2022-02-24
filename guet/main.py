@@ -1,7 +1,9 @@
 from pickle import TRUE
 import time
+from unicodedata import name
 import PySimpleGUI as sg
 import logging
+from guet import committers
 
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
@@ -20,6 +22,8 @@ from guet.util.errors import log_on_error
 
 menu_def = [['User Preferences', ['Select theme',sg.theme_list()]]]
 
+
+
 @log_on_error
 def main():
     file_system = FileSystem()
@@ -28,6 +32,7 @@ def main():
     current_committers = CurrentCommitters(file_system, committers)
     current_committers.register_observer(git)
 
+    
     sg.theme('DarkTeal9')
     sg.set_options(element_padding=(0, 0))      
     layout = [[sg.Output(size=(60,10))],[sg.Text(
@@ -37,9 +42,10 @@ def main():
         "3. add \n"
         "4. get \n"
         "5. set \n"
-        "6. pair \n"
-        "7. remove \n"
-        "8. yeet"
+        "6. remove \n"
+        "8. issues \n"
+        "9. pair \n"
+        "10. yeet"
     )],
         [sg.Push(),sg.Input(),sg.Push()],
         [sg.Text(size=(40, 1), key='message')],
@@ -47,10 +53,17 @@ def main():
         [sg.Menu(menu_def), ]]
 
     window = sg.Window('Guet', layout, finalize=True, resizable=True, grab_anywhere=True)
-
-    while True:
     
+    while True:
+        
         event, values = window.read()
+
+        committers_list = current_committers.get()
+        committers_list = list(filter(None, committers_list))
+        initials_list = [i.initials for i in committers_list]
+        current_initials = ''
+        for i in initials_list:
+                current_initials += f"{str(i)} "
 
         if event == 'button':
             event = window[event].GetText()
@@ -87,7 +100,8 @@ def main():
         file_system.save_all()
 
         if event == "Start":
-            Log_Format = "%(asctime)s - %(message)s"
+            
+            Log_Format = "%(asctime)s  %(message)s"
 
             logging.basicConfig(filename = "logfile.log",
                     filemode = "w",
@@ -95,12 +109,12 @@ def main():
                     level = logging.ERROR)
 
             logger = logging.getLogger()
-            logger.error("Session started")
+            logger.error(f"| Session started | {current_initials}")
             window['button'].update(text='Stop')
 
         if event == "Stop":
 
-            Log_Format = "%(asctime)s - %(message)s"
+            Log_Format = "%(asctime)s %(message)s "
 
             logging.basicConfig(filename = "logfile.log",
                     filemode = "w",
@@ -108,7 +122,7 @@ def main():
                     level = logging.ERROR)
 
             logger = logging.getLogger()
-            logger.error("Session stopped")
+            logger.error(f"| Session stopped | {current_initials}")
             window['button'].update(text='Start')
 
         if event in (sg.WIN_CLOSED, 'Quit'):
