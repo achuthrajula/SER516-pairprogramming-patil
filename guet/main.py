@@ -1,4 +1,7 @@
+from pickle import TRUE
+import time
 import PySimpleGUI as sg
+import logging
 
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
@@ -27,7 +30,8 @@ def main():
 
     sg.theme('DarkTeal9')
     sg.set_options(element_padding=(0, 0))      
-    layout = [[sg.Text(
+    layout = [[sg.Output(size=(60,10))],[sg.Text(
+        "\n"
         "1. help \n"
         "2. init \n"
         "3. add \n"
@@ -37,17 +41,21 @@ def main():
         "7. remove \n"
         "8. yeet"
     )],
-        [sg.Input()],
+        [sg.Push(),sg.Input(),sg.Push()],
         [sg.Text(size=(40, 1), key='message')],
-        [sg.Button('Execute', bind_return_key=True)], [sg.Button('Quit')],[sg.Menu(menu_def), ]]
+        [sg.Push(),sg.Button('Execute', bind_return_key=True),sg.Button('Start',key='button'),sg.Button('Quit'),sg.Push()],
+        [sg.Menu(menu_def), ]]
 
-    window = sg.Window('Guet', layout, finalize=True, resizable=True)
+    window = sg.Window('Guet', layout, finalize=True, resizable=True, grab_anywhere=True)
 
     while True:
+    
         event, values = window.read()
 
+        if event == 'button':
+            event = window[event].GetText()
+        
         command_map = CommandMap()
-
 
         command_map.add_command('help', HelpCommandFactory(
             command_map, file_system), 'Display guet usage')
@@ -71,12 +79,39 @@ def main():
         
         if event in sg.theme_list():
             args = event
+        
         else:
             command = command_map.get_command(args[0]).build()
             command.play(args[1:])
         
         file_system.save_all()
 
+        if event == "Start":
+            Log_Format = "%(asctime)s - %(message)s"
+
+            logging.basicConfig(filename = "logfile.log",
+                    filemode = "w",
+                    format = Log_Format, 
+                    level = logging.ERROR)
+
+            logger = logging.getLogger()
+            logger.error("Session started")
+            window['button'].update(text='Stop')
+
+        if event == "Stop":
+
+            Log_Format = "%(asctime)s - %(message)s"
+
+            logging.basicConfig(filename = "logfile.log",
+                    filemode = "w",
+                    format = Log_Format, 
+                    level = logging.ERROR)
+
+            logger = logging.getLogger()
+            logger.error("Session stopped")
+            window['button'].update(text='Start')
+
         if event in (sg.WIN_CLOSED, 'Quit'):
             print(event)
             break
+ 
