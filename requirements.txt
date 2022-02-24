@@ -5,3 +5,4 @@ pylint==2.4.4
 unittest-parallel==0.8.2
 PySimpleGUI==4.56.0
 plyer==2.0.0
+PyGithub==1.55

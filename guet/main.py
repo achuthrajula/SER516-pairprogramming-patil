@@ -29,7 +29,7 @@ def main():
 
     sg.theme('DarkTeal9')
     sg.set_options(element_padding=(0, 0))
-    layout = [[sg.Output(size=(60, 20))], [sg.Text(
+    layout = [[sg.Output(size=(60, 10))], [sg.Text(
         "Choose a number to execute the command: \n\n"
         "1. help \n"
         "2. init \n"
