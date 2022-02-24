@@ -4,12 +4,13 @@ import shlex
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
 from guet.commands.get import GetCommandFactory
-from guet.commands.help import HelpCommandFactory, UnknownCommandFactory
+from guet.commands.help import HelpCommandFactory
 from guet.commands.init import InitCommandFactory
 from guet.commands.remove import RemoveCommandFactory
 from guet.commands.set import SetCommittersCommand
 from guet.commands.yeet import YeetCommandFactory
 from guet.commands.team import GetTaigaFactory
+from guet.commands.issues import IssuesCommandFactory
 from guet.committers import Committers2, CurrentCommitters
 from guet.files import FileSystem
 from guet.git import GitProxy
@@ -29,7 +30,7 @@ def main():
 
     sg.theme('DarkTeal9')
     sg.set_options(element_padding=(0, 0))
-    layout = [[sg.Output(size=(60, 20))], [sg.Text(
+    layout = [[sg.Output(size=(60, 10))], [sg.Text(
         "Choose a number to execute the command: \n\n"
         "1. help \n"
         "2. init \n"
@@ -38,6 +39,7 @@ def main():
         "5. set \n"
         "6. remove \n"
         "7. taiga-teammates \n"
+        "9. issues \n"
         "8. yeet \n"
     )],
         [sg.Input()],
@@ -68,8 +70,9 @@ def main():
         command_map.add_command('yeet',
                                 YeetCommandFactory(file_system, git),
                                 'Remove guet configurations')
-        command_map.set_default(UnknownCommandFactory(command_map))
-
+        command_map.add_command('issues', 
+                                IssuesCommandFactory(file_system),
+                                'Fetch Issues from GitHub')
         args = add_command_help_if_invalid_command_given(
             shlex.split(values[0]))
 
