@@ -8,6 +8,7 @@ from guet.commands.help import HelpCommandFactory
 from guet.commands.init import InitCommandFactory
 from guet.commands.remove import RemoveCommandFactory
 from guet.commands.set import SetCommittersCommand
+from guet.commands.pair import PairCommittersCommand
 from guet.commands.yeet import YeetCommandFactory
 from guet.commands.team import GetTaigaFactory
 from guet.commands.issues import IssuesCommandFactory
@@ -29,9 +30,9 @@ def main():
     current_committers.register_observer(git)
 
     sg.theme('DarkTeal9')
-    sg.set_options(element_padding=(0, 0))
-    layout = [[sg.Output(size=(60, 10))], [sg.Text(
-        "Choose a number to execute the command: \n\n"
+    sg.set_options(element_padding=(0, 0))      
+    layout = [[sg.Output(size=(60,20))],[sg.Text(
+
         "1. help \n"
         "2. init \n"
         "3. add \n"
@@ -39,8 +40,10 @@ def main():
         "5. set \n"
         "6. remove \n"
         "7. taiga-teammates \n"
+        "8. pair \n"
         "9. issues \n"
-        "8. yeet \n"
+        "10. yeet \n"
+
     )],
         [sg.Input()],
         [sg.Text(size=(40, 1), key='message')],
@@ -63,6 +66,8 @@ def main():
             file_system, committers, current_committers), 'List information about committers')
         command_map.add_command('set', SetCommittersCommand(
             file_system, committers, current_committers, git), 'Set committers for current repository')
+        command_map.add_command('pair', PairCommittersCommand(
+            file_system, committers, current_committers, git), 'Set pairing strategy')
         command_map.add_command('remove', RemoveCommandFactory(
             file_system, committers), 'Remove committer')
         command_map.add_command(
@@ -84,5 +89,6 @@ def main():
 
         file_system.save_all()
 
-        if event == sg.WINDOW_CLOSED or event == 'Quit':
+        if event in (sg.WIN_CLOSED, 'Quit'):
+            print(event)
             break
