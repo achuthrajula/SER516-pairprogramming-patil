@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import shlex
+import logging
 
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
@@ -43,17 +44,28 @@ def main():
         "7. taiga-teammates \n"
         "8. issues \n"
         "9. co-author \n"
-        "10. yeet \n"
+        "10. pair \n"
+        "11. yeet \n"
     )],
-        [sg.Input()],
+        [sg.Push(),sg.Input(),sg.Push()],
         [sg.Text(size=(40, 1), key='message')],
-        [sg.Button('Execute', bind_return_key=True)], [sg.Button('Quit')], [sg.Menu(menu_def), ]]
+        [sg.Push(),sg.Button('Execute', bind_return_key=True),sg.Button('Start',key='button'),sg.Button('Quit'),sg.Push()],[sg.Menu(menu_def), ]]
 
-    window = sg.Window('Guet', layout, finalize=True, resizable=True)
+    window = sg.Window('Guet', layout, finalize=True, resizable=True, grab_anywhere=True)
 
     while True:
         event, values = window.read()
 
+        committers_list = current_committers.get()
+        committers_list = list(filter(None, committers_list))
+        initials_list = [i.initials for i in committers_list]
+        current_initials = ''
+        for i in initials_list:
+                current_initials += f"{str(i)} "
+
+        if event == 'button':
+                event = window[event].GetText()
+            
         command_map = CommandMap()
 
         command_map.add_command('help', HelpCommandFactory(
@@ -92,6 +104,32 @@ def main():
             command.play(args[1:])
 
         file_system.save_all()
+
+        if event == "Start":
+                
+                Log_Format = "%(asctime)s  %(message)s"
+
+                logging.basicConfig(filename = "logfile.log",
+                        filemode = "w",
+                        format = Log_Format, 
+                        level = logging.ERROR)
+
+                logger = logging.getLogger()
+                logger.error(f"| Session started | {current_initials}")
+                window['button'].update(text='Stop')
+
+        if event == "Stop":
+
+                Log_Format = "%(asctime)s %(message)s "
+
+                logging.basicConfig(filename = "logfile.log",
+                        filemode = "w",
+                        format = Log_Format, 
+                        level = logging.ERROR)
+
+                logger = logging.getLogger()
+                logger.error(f"| Session stopped | {current_initials}")
+                window['button'].update(text='Start')
 
         if event in (sg.WIN_CLOSED, 'Quit'):
             print(event)

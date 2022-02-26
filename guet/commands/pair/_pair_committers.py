@@ -1,6 +1,7 @@
 from typing import List
 from plyer import notification
 import requests
+import logging
 import json
 import sys
 import datetime
@@ -79,6 +80,10 @@ class PairCommittersAction(Action):
                         member_id.append(members["id"])
                         member_names.append(members["full_name"])
                         print(members["full_name_display"] + ": " + members["role_name"]+"\n")
+        elif args[0] =="clear-log":
+            file = open("logfile.log","r+")
+            file.truncate(0)
+            file.close()
   
         else:
             strategies = {
