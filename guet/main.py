@@ -10,6 +10,8 @@ from guet.commands.remove import RemoveCommandFactory
 from guet.commands.set import SetCommittersCommand
 from guet.commands.pair import PairCommittersCommand
 from guet.commands.yeet import YeetCommandFactory
+from guet.commands.team import GetTaigaFactory
+from guet.commands.issues import IssuesCommandFactory
 from guet.committers import Committers2, CurrentCommitters
 from guet.files import FileSystem
 from guet.git import GitProxy
@@ -30,6 +32,7 @@ def main():
     sg.theme('DarkTeal9')
     sg.set_options(element_padding=(0, 0))      
     layout = [[sg.Output(size=(60,20))],[sg.Text(
+
         "1. help \n"
         "2. init \n"
         "3. add \n"
@@ -40,6 +43,7 @@ def main():
         "8. pair \n"
         "9. issues \n"
         "10. yeet \n"
+
     )],
         [sg.Input()],
         [sg.Text(size=(40, 1), key='message')],
@@ -66,10 +70,14 @@ def main():
             file_system, committers, current_committers, git), 'Set pairing strategy')
         command_map.add_command('remove', RemoveCommandFactory(
             file_system, committers), 'Remove committer')
+        command_map.add_command(
+            'taiga-teammates', GetTaigaFactory(file_system), 'Get Taiga teammates')
         command_map.add_command('yeet',
                                 YeetCommandFactory(file_system, git),
                                 'Remove guet configurations')
-
+        command_map.add_command('issues', 
+                                IssuesCommandFactory(file_system),
+                                'Fetch Issues from GitHub')
         args = add_command_help_if_invalid_command_given(
             shlex.split(values[0]))
 

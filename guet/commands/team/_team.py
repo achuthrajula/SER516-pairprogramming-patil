@@ -1,65 +1,77 @@
-import requests
 import json
-import sys
+import requests
+from pickle import NONE
+from typing import List
 
-url = "https://api.taiga.io/api/v1/auth?"
+from guet.steps.action import Action
 
-payload = json.dumps({
-  "username": sys.argv[1],
-  "password": sys.argv[2],
-  "type": "normal"
-  
-})
-headers = {
-  'Content-Type': 'application/json'
-}
+class GetTaigaTeammates(Action):
 
-response = requests.request("POST", url, headers=headers, data=payload)
+    def __init__(self):
+        super().__init__()
 
-user = response.json()
-User_id = user['id']
-Auth = user['auth_token']
+    def execute(self, args: List[str]):
 
-#print(response.text)
+        # Making a request to Taiga API
+        # by passing command line arguments
+        # to obtain auth token form Taiga server
 
+        url = "https://api.taiga.io/api/v1/auth?"
 
-
-url = "https://api.taiga.io/api/v1/projects"
-
-params = {'member': User_id } 
-
-
-headers = {
-  'Authorization': 'Bearer '+Auth  
-}
-
-response_1 = requests.request("GET", url, headers=headers, params=params)
-
-
-#print(response.text)
-
-#payload_1 = json.dumps({
- # "name": sys.argv[3]
-#})
-
-
-proj_name = input("Enter project name:   ")#sys.argv[3]
-ABC = response_1.json()
-for r in range(len(ABC)):
-    if(proj_name == ABC[r]['name']):
-        members = ABC[r]['members']
-
-#print(members)
-print("\nName of the members:\n")
-
-for m in members:
-    url = "https://api.taiga.io/api/v1/users/"+str(m)
-    #params = {'member': m } 
-    headers = {
-        'Authorization': 'Bearer '+Auth
+        payload = json.dumps({
+            "username": args[0],
+            "password": args[1],
+            "type": "normal"
+        })
+        
+        headers = {
+            'Content-Type': 'application/json'
         }
-    response_2 = requests.request("GET", url, headers=headers)
-    mem = response_2.json()
-    mem_1 = mem['full_name']
-    print(mem_1,"\n")
-    
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        user = response.json()
+        user_id = user['id']
+        auth = user['auth_token']
+        url = "https://api.taiga.io/api/v1/projects"
+
+        print('Authorization: Done\n')
+
+        # Using the obtained auth token
+        # to get the details of the project
+
+        params = {'member': user_id}
+
+        headers = {
+            'Authorization': 'Bearer ' + auth
+        }
+
+        response = requests.request(
+            "GET", url, headers=headers, params=params)
+
+        project_name = args[2]
+        project_response = response.json()
+
+        print('Fetching project data: Done\n')
+
+        for r in range(len(project_response)):
+            if(project_name == project_response[r]['name']):
+                user_ids = project_response[r]['members']
+
+        # From the fetched project details
+        # retrieving the details of the teammates
+
+        teammates = []
+        for user_id in user_ids:
+            url = "https://api.taiga.io/api/v1/users/"+str(user_id)
+            headers = {
+                'Authorization': 'Bearer ' + auth
+            }
+            response = requests.request("GET", url, headers=headers)
+            user = response.json()
+            name = user['full_name']
+            teammates.append(name)
+
+        print('Fetching teammates from project: Done\n')
+  
+        print("Teammates: ", teammates)
