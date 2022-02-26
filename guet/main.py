@@ -1,14 +1,10 @@
-from pickle import TRUE
-import time
-from unicodedata import name
 import PySimpleGUI as sg
-import logging
-from guet import committers
+import shlex
 
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
 from guet.commands.get import GetCommandFactory
-from guet.commands.help import HelpCommandFactory, UnknownCommandFactory
+from guet.commands.help import HelpCommandFactory
 from guet.commands.init import InitCommandFactory
 from guet.commands.remove import RemoveCommandFactory
 from guet.commands.set import SetCommittersCommand
@@ -20,8 +16,7 @@ from guet.git import GitProxy
 from guet.util import add_command_help_if_invalid_command_given
 from guet.util.errors import log_on_error
 
-menu_def = [['User Preferences', ['Select theme',sg.theme_list()]]]
-
+menu_def = [['User Preferences', ['Select theme', sg.theme_list()]]]
 
 
 @log_on_error
@@ -32,42 +27,29 @@ def main():
     current_committers = CurrentCommitters(file_system, committers)
     current_committers.register_observer(git)
 
-    
     sg.theme('DarkTeal9')
     sg.set_options(element_padding=(0, 0))      
-    layout = [[sg.Output(size=(60,10))],[sg.Text(
-        "\n"
+    layout = [[sg.Output(size=(60,20))],[sg.Text(
         "1. help \n"
         "2. init \n"
         "3. add \n"
         "4. get \n"
         "5. set \n"
         "6. remove \n"
-        "8. issues \n"
-        "9. pair \n"
-        "10. yeet"
+        "7. taiga-teammates \n"
+        "8. pair \n"
+        "9. issues \n"
+        "10. yeet \n"
     )],
-        [sg.Push(),sg.Input(),sg.Push()],
+        [sg.Input()],
         [sg.Text(size=(40, 1), key='message')],
-        [sg.Push(),sg.Button('Execute', bind_return_key=True),sg.Button('Start',key='button'),sg.Button('Quit'),sg.Push()],
-        [sg.Menu(menu_def), ]]
+        [sg.Button('Execute', bind_return_key=True)], [sg.Button('Quit')], [sg.Menu(menu_def), ]]
 
-    window = sg.Window('Guet', layout, finalize=True, resizable=True, grab_anywhere=True)
-    
+    window = sg.Window('Guet', layout, finalize=True, resizable=True)
+
     while True:
-        
         event, values = window.read()
 
-        committers_list = current_committers.get()
-        committers_list = list(filter(None, committers_list))
-        initials_list = [i.initials for i in committers_list]
-        current_initials = ''
-        for i in initials_list:
-                current_initials += f"{str(i)} "
-
-        if event == 'button':
-            event = window[event].GetText()
-        
         command_map = CommandMap()
 
         command_map.add_command('help', HelpCommandFactory(
@@ -84,48 +66,21 @@ def main():
             file_system, committers, current_committers, git), 'Set pairing strategy')
         command_map.add_command('remove', RemoveCommandFactory(
             file_system, committers), 'Remove committer')
-        command_map.add_command('yeet', YeetCommandFactory(file_system, git),
+        command_map.add_command('yeet',
+                                YeetCommandFactory(file_system, git),
                                 'Remove guet configurations')
-        command_map.set_default(UnknownCommandFactory(command_map))
-        
-        args = add_command_help_if_invalid_command_given(values[0].split())
-        
+
+        args = add_command_help_if_invalid_command_given(
+            shlex.split(values[0]))
+
         if event in sg.theme_list():
             args = event
-        
         else:
             command = command_map.get_command(args[0]).build()
             command.play(args[1:])
-        
+
         file_system.save_all()
-
-        if event == "Start":
-            
-            Log_Format = "%(asctime)s  %(message)s"
-
-            logging.basicConfig(filename = "logfile.log",
-                    filemode = "w",
-                    format = Log_Format, 
-                    level = logging.ERROR)
-
-            logger = logging.getLogger()
-            logger.error(f"| Session started | {current_initials}")
-            window['button'].update(text='Stop')
-
-        if event == "Stop":
-
-            Log_Format = "%(asctime)s %(message)s "
-
-            logging.basicConfig(filename = "logfile.log",
-                    filemode = "w",
-                    format = Log_Format, 
-                    level = logging.ERROR)
-
-            logger = logging.getLogger()
-            logger.error(f"| Session stopped | {current_initials}")
-            window['button'].update(text='Start')
 
         if event in (sg.WIN_CLOSED, 'Quit'):
             print(event)
             break
- 
