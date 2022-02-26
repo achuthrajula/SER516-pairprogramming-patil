@@ -2,56 +2,69 @@ import requests
 import json
 import sys
 from guet.steps.action import Action
+from typing import List
 
 class SetCoauthor(Action):
     def __init__(self):
         super().__init__()
 
+    def execute(self, args: List[str]):
+
+      print(args)
+
+      url = "https://api.taiga.io/api/v1/auth?"
+
+      payload = json.dumps({
+        "username": args[0],
+        "password": args[1],
+        "type": "normal"
+        
+      })
+      headers = {
+        'Content-Type': 'application/json'
+      }
+
+      response = requests.request("POST", url, headers=headers, data=payload)
+      # print(response.text)
+      user = response.json()
+      User_id = user['id']
+      Auth = user['auth_token']
 
 
-url = "https://api.taiga.io/api/v1/auth?"
+      url = "https://api.taiga.io/api/v1/tasks?project=438216"
 
-payload = json.dumps({
-  "username": sys.argv[1],
-  "password": sys.argv[2],
-  "type": "normal"
-  
-})
-headers = {
-  'Content-Type': 'application/json'
-}
+      payload = ""
+      headers = {}
 
-response = requests.request("POST", url, headers=headers, data=payload)
+      response_1 = requests.request("GET", url, headers=headers, data=payload)
 
-user = response.json()
-User_id = user['id']
-Auth = user['auth_token']
+      # print(response_1.text)
 
+      task_name = args[2]
+      ABC = response_1.json()
+      for r in range(len(ABC)):
+        if(task_name == ABC[r]['subject']):
+          id = ABC[r]['id']
+          version = ABC[r]['version']
 
-url = "https://api.taiga.io/api/v1/tasks?project=438216"
+          # print(id, version)
+          #print(version)
+          comm = args[3]
+          # print(comm)
 
-payload = ""
-headers = {}
+          url = f"https://api.taiga.io/api/v1/tasks/{id}"
 
-response_1 = requests.request("GET", url, headers=headers, data=payload)
+          # print(url)
 
-#print(response_1.text)
+          payload = {
+              "version": f"{version}",
+              "comment": f"@{comm}"
+          }
+          headers = {
+              "Content-Type": "application/json",
+              "Authorization": f"Bearer {Auth}"
+          }
 
-task_name = input("Enter task subject:   ")#sys.argv[3]
-ABC = response_1.json()
-for r in range(len(ABC)):
-    if(task_name == ABC[r]['subject']):
-        id = ABC[r]['id']
-        version = ABC[r]['version']
-        #print(version)
-        comm = input("Please enter your message for co-author : ")
-        url = "https://api.taiga.io/api/v1/tasks/"+str(id)
-        payload = "{\n\t\"version\":"+str(version)+",\n\t\"comment\": \""+'@'+comm+"\"\n}"
-        headers = {
-            'content-type': "application/json",
-            'authorization': 'Bearer '+Auth,
-            'cache-control': "no-cache",
-            'postman-token': "3efa9b41-3192-b4ba-ff77-679f0d9c8cd2"
-            }
+          response = requests.request("PATCH", url, json=payload, headers=headers)
 
-response_2 = requests.request("PATCH", url, data=payload, headers=headers)
+          print("Successfully added co-author")
