@@ -11,6 +11,7 @@ from guet.commands.set import SetCommittersCommand
 from guet.commands.yeet import YeetCommandFactory
 from guet.commands.team import GetTaigaFactory
 from guet.commands.issues import IssuesCommandFactory
+from guet.commands.coauthor import SetCoauthorFactory
 from guet.committers import Committers2, CurrentCommitters
 from guet.files import FileSystem
 from guet.git import GitProxy
@@ -39,8 +40,9 @@ def main():
         "5. set \n"
         "6. remove \n"
         "7. taiga-teammates \n"
-        "9. issues \n"
-        "8. yeet \n"
+        "8. issues \n"
+        "9. co-author \n"
+        "10. yeet \n"
     )],
         [sg.Input()],
         [sg.Text(size=(40, 1), key='message')],
@@ -55,6 +57,8 @@ def main():
 
         command_map.add_command('help', HelpCommandFactory(
             command_map, file_system), 'Display guet usage')
+        command_map.add_command(
+            'co-author', SetCoauthorFactory(file_system), 'Sets co-author in the comment section of the task in Taiga')
         command_map.add_command('init', InitCommandFactory(
             GitProxy(), file_system), 'Start guet tracking in the current repository')
         command_map.add_command('add', AddCommandFactory(
@@ -73,6 +77,8 @@ def main():
         command_map.add_command('issues', 
                                 IssuesCommandFactory(file_system),
                                 'Fetch Issues from GitHub')
+       
+
         args = add_command_help_if_invalid_command_given(
             shlex.split(values[0]))
 
