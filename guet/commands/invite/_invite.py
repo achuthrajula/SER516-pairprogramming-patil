@@ -1,8 +1,13 @@
-from email import message
 import os 
 from _path import ROOT_DIR
+from typing import List
 
-message =   """
+from guet.steps.action import Action
+
+class SendInvite(Action):
+    def __init__(self):
+        super().__init__()
+        self.message = """
 ## An open invitation to collaborate
 <br />
 
@@ -22,21 +27,25 @@ message =   """
 </pre>
 """
 
-try: 
-    print(ROOT_DIR)
-    file_exists = os.path.exists(ROOT_DIR + "/invite.md")
+    def execute(self, args: List[str]):
 
+        try: 
+            # Check if the file exists
+            file_exists = os.path.exists(ROOT_DIR + "/invite.md")
 
-    if(file_exists):
-        os.remove(ROOT_DIR + "/invite.md")
+            # If the file exists, remove it from the directory
+            if(file_exists):
+                os.remove(ROOT_DIR + "/invite.md")
 
-    f = open(f"{ROOT_DIR}/invite.md", "w")
-    f.write(message)
-    # f.close()
+            # Create a new file and add the invitation message
+            f = open(f"{ROOT_DIR}/invite.md", "w")
+            f.write(self.message)
+            f.close()
 
-    #open and read the file after the appending:
-    f = open(f"{ROOT_DIR}/invite.md", "w")
-    print(f.read())
+            # Send acknowledgement to the user
+            f = open(f"{ROOT_DIR}/invite.md", "w")
+            print(f.read())
 
-except Exception as e:
-    print(e)
+        except Exception as e:
+            # Handle exception and notify user
+            print(f"Invite command failed due to: {e}")
