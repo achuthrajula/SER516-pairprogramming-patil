@@ -14,6 +14,7 @@ from guet.commands.yeet import YeetCommandFactory
 from guet.commands.team import GetTaigaFactory
 from guet.commands.issues import IssuesCommandFactory
 from guet.commands.coauthor import SetCoauthorFactory
+from guet.commands.invite import SendInvitesFactory
 from guet.committers import Committers2, CurrentCommitters
 from guet.files import FileSystem
 from guet.git import GitProxy
@@ -45,7 +46,8 @@ def main():
         "8. issues \n"
         "9. co-author \n"
         "10. pair \n"
-        "11. yeet \n"
+        "11. invite \n"
+        "12. yeet \n"
     )],
         [sg.Push(),sg.Input(),sg.Push()],
         [sg.Text(size=(40, 1), key='message')],
@@ -86,6 +88,8 @@ def main():
             file_system, committers), 'Remove committer')
         command_map.add_command(
             'taiga-teammates', GetTaigaFactory(file_system), 'Get Taiga teammates')
+        command_map.add_command(
+            'invite', SendInvitesFactory(file_system), 'Send invitation to collaborate')
         command_map.add_command('yeet',
                                 YeetCommandFactory(file_system, git),
                                 'Remove guet configurations')
