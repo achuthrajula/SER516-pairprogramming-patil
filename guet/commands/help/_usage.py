@@ -10,6 +10,7 @@ class UsageAction(Action):
         self.command_map = command_map
 
     def execute(self, args: List[str]):
-        print('usage: guet <command>\n')
-        for key in self.command_map.all_commands():
-            print(f'{key}: {self.command_map.get_description(key)}')
+        pass
+        # print('usage: guet <command>\n')
+        # for key in self.command_map.all_commands():
+        #     print(f'{key}: {self.command_map.get_description(key)}')
