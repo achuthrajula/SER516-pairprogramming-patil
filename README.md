@@ -89,6 +89,45 @@ Remove committer
 $ guet remove p1
 ```
 
+### taiga-teammates
+
+Get Taiga teammates
+
+```
+$ guet taiga-teammates <taiga_username> <taiga_password> <project_name>
+```
+
+### issues
+Fetch open issues from GitHub Repository
+
+```
+$ guet issues <GitHub_access_token> <repository_path>
+```
+
+### invite
+
+Send invitation to collaborate via GitHub repo and email
+
+```
+$ guet invite 
+Send invitation by adding invitation to the repo
+
+$ guet invite <receiver_email>
+Send invitation by adding invitation to the repo and email to the specified email with default email client and message
+
+$ guet invite <receiver_email> <message>
+Send invitation by adding invitation to the repo and email to the specified email and message with default email client
+
+$ guet invite <receiver_email> <message>
+Send invitation by adding invitation to the repo and email to the specified email and message with default email client
+
+$ guet invite <sender_email> <sender_password> <receiver_email> 
+Send invitation by adding invitation to the repo and email using specified email and password with default message
+
+$ guet invite <sender_email> <sender_password> <receiver_email> <message>
+Send invitation by adding invitation to the repo and email using specified email and password with custom message
+```
+
 ### yeet
 
 Remove guet configurations.
