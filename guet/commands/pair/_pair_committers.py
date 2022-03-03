@@ -98,18 +98,22 @@ class PairCommittersAction(Action):
                     final_strategy = strategies['do']
                 else:
                     final_strategy = strategies['sj']
+                for i in range(2):
+                    for j in ["Driver","Observer","Senior","Junior"]:
+                            if j in found[i].name:
+                                found[i].name = found[i].name.replace(f"({j})","")
+
+                if committer_initials[0] == found[0].initials:
+                        print(found[0].name)
+                        found[0].name = f"{found[0].name}({final_strategy[0]})"
+                        print(found[0].name)
+                        found[1].name = f"{found[1].name}({final_strategy[1]})"
+                else:
+                        found[0].name = f"{found[0].name}({final_strategy[1]})"
+                        found[1].name = f"{found[1].name}({final_strategy[0]})"
                 for i in range(0,2):
                     self.committers.remove(found[i].initials)
-                    for j in ["Driver","Observer","Senior","Junior"]:
-                        if j in found[i].name:
-                            found[i].name = found[i].name.replace(f"({j})","")
                     self.committers.add(found[i])
-                if committer_initials[0] == found[0].initials:
-                    found[0].name = f"{found[0].name}({final_strategy[0]})"
-                    found[1].name = f"{found[1].name}({final_strategy[1]})"
-                else:
-                    found[0].name = f"{found[0].name}({final_strategy[1]})"
-                    found[1].name = f"{found[1].name}({final_strategy[0]})"
                     
                 self.current_committers.set(found)    
                 print(f"Current pairing strategy is {final_strategy[0]} and {final_strategy[1]}\n {found[0].name} \n {found[1].name}")

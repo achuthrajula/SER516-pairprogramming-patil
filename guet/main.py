@@ -1,3 +1,4 @@
+from distutils.command.config import config
 import PySimpleGUI as sg
 import shlex
 import logging
@@ -23,6 +24,10 @@ from guet.util.errors import log_on_error
 
 menu_def = [['User Preferences', ['Select theme', sg.theme_list()]]]
 
+f = open('themeStorage.txt', 'r')
+if f.mode=='r':
+    storedTheme = f.read()
+sg.theme(f'{storedTheme}')
 
 @log_on_error
 def main():
@@ -31,8 +36,7 @@ def main():
     git = GitProxy()
     current_committers = CurrentCommitters(file_system, committers)
     current_committers.register_observer(git)
-
-    sg.theme('DarkTeal9')
+    
     sg.set_options(element_padding=(0, 0))      
     layout = [[sg.Output(size=(60,20))],[sg.Text(
 
@@ -56,6 +60,7 @@ def main():
     window = sg.Window('Guet', layout, finalize=True, resizable=True, grab_anywhere=True)
 
     while True:
+
         event, values = window.read()
 
         committers_list = current_committers.get()
@@ -103,6 +108,13 @@ def main():
 
         if event in sg.theme_list():
             args = event
+            window.close()
+            file = open("themeStorage.txt", "w")
+            file.write("%s" %(str(event)))
+            file.close()
+            sg.theme(f'{str(event)}')
+            window.read()
+            main()
         else:
             command = command_map.get_command(args[0]).build()
             command.play(args[1:])
