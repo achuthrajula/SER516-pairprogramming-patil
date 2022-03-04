@@ -1,11 +1,5 @@
 from typing import List
-from plyer import notification
 import requests
-import logging
-import json
-import sys
-import datetime
-import time
 
 from guet.committers import Committers2 as Committers
 from guet.committers import CurrentCommitters
@@ -25,7 +19,6 @@ class PairCommittersAction(Action):
             data = {"password": str(args[2]), "username": str(args[1]), "type": "normal"}
             resp = requests.post('https://api.taiga.io/api/v1/auth', json=data)
 
-
             token = ""
             if resp.status_code != 200:
                 print("Error")
@@ -43,17 +36,13 @@ class PairCommittersAction(Action):
                     for task_statuses in resp.json()["task_statuses"]:
                         project_id = str(task_statuses["project_id"])
 
-
             resp = requests.get('https://api.taiga.io/api/v1/milestones?project='+project_id, json=data)
             sprint_id = 0
             sprint_name = []
             milestones_id = []
-            user_stories= {}
-            sprints = []
             for values in resp.json():
                 sprint_id = sprint_id + 1
                 sprint_name.append(values["name"])
-                user_stories = values["user_stories"]
                 milestones_id.append(values["id"])
             sprint_option = int(args[3])
             print(f"Selected sprint is {sprint_name[sprint_option]}\n")
@@ -79,7 +68,8 @@ class PairCommittersAction(Action):
                     for members in resp.json()["members"]:
                         member_id.append(members["id"])
                         member_names.append(members["full_name"])
-                        print(members["full_name_display"] + ": " + members["role_name"]+"\n")
+                        print(members["full_name_display"] + ": " + members["role_name"])
+
         elif args[0] =="clear-log":
             file = open("logfile.log","r+")
             file.truncate(0)
@@ -104,9 +94,7 @@ class PairCommittersAction(Action):
                                 found[i].name = found[i].name.replace(f"({j})","")
 
                 if committer_initials[0] == found[0].initials:
-                        print(found[0].name)
                         found[0].name = f"{found[0].name}({final_strategy[0]})"
-                        print(found[0].name)
                         found[1].name = f"{found[1].name}({final_strategy[1]})"
                 else:
                         found[0].name = f"{found[0].name}({final_strategy[1]})"

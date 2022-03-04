@@ -11,6 +11,4 @@ class UsageAction(Action):
 
     def execute(self, args: List[str]):
         pass
-        # print('usage: guet <command>\n')
-        # for key in self.command_map.all_commands():
-        #     print(f'{key}: {self.command_map.get_description(key)}')
+       

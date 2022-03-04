@@ -1,4 +1,3 @@
-from distutils.command.config import config
 import PySimpleGUI as sg
 import shlex
 import logging
@@ -107,7 +106,6 @@ def main():
             shlex.split(values[0]))
 
         if event in sg.theme_list():
-            args = event
             window.close()
             file = open("themeStorage.txt", "w")
             file.write("%s" %(str(event)))
@@ -121,31 +119,23 @@ def main():
 
         file_system.save_all()
 
-        if event == "Start":
-                
-                Log_Format = "%(asctime)s  %(message)s"
+        if event == "Start" or event == "Stop":
+            Log_Format = "%(asctime)s  %(message)s"
 
-                logging.basicConfig(filename = "logfile.log",
-                        filemode = "w",
-                        format = Log_Format, 
-                        level = logging.ERROR)
+            logging.basicConfig(filename = "logfile.log",
+                            filemode = "w",
+                            format = Log_Format, 
+                            level = logging.ERROR)
 
-                logger = logging.getLogger()
-                logger.error(f"| Session started | {current_initials}")
-                window['button'].update(text='Stop')
+            logger = logging.getLogger()
 
-        if event == "Stop":
+            if event == "Start":
+                    logger.error(f"| Session started | {current_initials}")
+                    window['button'].update(text='Stop')
 
-                Log_Format = "%(asctime)s %(message)s "
-
-                logging.basicConfig(filename = "logfile.log",
-                        filemode = "w",
-                        format = Log_Format, 
-                        level = logging.ERROR)
-
-                logger = logging.getLogger()
-                logger.error(f"| Session stopped | {current_initials}")
-                window['button'].update(text='Start')
+            if event == "Stop":
+                    logger.error(f"| Session stopped | {current_initials}")
+                    window['button'].update(text='Start')
 
         if event in (sg.WIN_CLOSED, 'Quit'):
             print(event)

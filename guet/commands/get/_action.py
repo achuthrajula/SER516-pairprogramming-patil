@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 from pickle import NONE
 from typing import List
-from plyer import notification
 
 from guet.committers import Committers2 as Committers
 from guet.committers import CommittersPrinter, CurrentCommitters
@@ -22,33 +21,17 @@ class GetCommittersAction(Action):
             committers = self.committers.all()
             pre_print = 'All committers'
             if committers == []:
-                notification.notify(title="Guet",
-                                    message="get: No committers",
-                                    app_icon='',
-                                    timeout=10,
-                                    toast=True)
+                print('get: No committers')
             else:
-                notification.notify(title="Guet",
-                                    message=f"get: {pre_print} {committers}",
-                                    app_icon='',
-                                    timeout=10,
-                                    toast=True)
+                print(f"get: {pre_print} {committers}")
         elif args[0] == 'current':
             committers = self.current.get()
             pre_print = 'Current committers'
             committers = list(filter(None, committers))
             if committers == []:
-                notification.notify(title="Guet",
-                                    message="get: No active committers",
-                                    app_icon='',
-                                    timeout=10,
-                                    toast=True)
+                print("get: No active committers")
             else:
-                notification.notify(title="Guet",
-                                    message=f"guet: {pre_print} {committers}",
-                                    app_icon='',
-                                    timeout=10,
-                                    toast=True)
+                print(f"guet: {pre_print} {committers}")
         elif args[0] == 'pair-log':
             file_name = "logfile.log"
             file = open(file_name, "r")
