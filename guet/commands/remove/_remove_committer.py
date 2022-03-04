@@ -1,4 +1,6 @@
+from operator import length_hint
 from typing import List
+from plyer import notification
 
 from guet.steps.action import Action
 from guet.committers import CommittersPrinter
@@ -10,13 +12,18 @@ class RemoveCommitterAction(Action):
         self.committers = committers
 
     def execute(self, args: List[str]):
-        committer = self.committers.by_initials(args[0])
-        found = [c for c in self.committers.all() if c.initials == args[0].lower()]
+        for i in range(0,len(args)):
+            committer = self.committers.by_initials(args[i])
+            found = [c for c in self.committers.all() if c.initials == args[i].lower()]
 
-        if not committer:
-            print(f'Remove: No committer exists with initials {args[0]}')
-        else:
-            print('Removed committer')
-            Printer = CommittersPrinter(initials_only = False)
-            self.committers.remove(committer.initials)
-            Printer.print(found)
+            if not committer:
+                notification.notify(title="Guet",
+                                    message=f"Remove: No committer exists with initials {args[i]}",
+                                    app_icon='',
+                                    timeout=10,
+                                    toast=True)
+            else:
+                print('Removed committer')
+                Printer = CommittersPrinter(initials_only = False)
+                self.committers.remove(committer.initials)
+                Printer.print(found)
