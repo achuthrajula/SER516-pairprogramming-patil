@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 import shlex
 import logging
+import os
+from pathlib import Path
 
 from guet.commands import CommandMap
 from guet.commands.add import AddCommandFactory
@@ -21,12 +23,25 @@ from guet.git import GitProxy
 from guet.util import add_command_help_if_invalid_command_given
 from guet.util.errors import log_on_error
 
-menu_def = [['User Preferences', ['Select theme', sg.theme_list()]]]
+DarkColors = ['DarkAmber', 'DarkBlack', 'DarkBlue', 'DarkGreen', 'DarkRed',
+              'DarkTeal', 'DarkBrown', 'DarkYellow', 'DarkGrey', 'DarkPurple']
+LightColors = ['LightBlue', 'LightGreen', 'LightTeal',
+               'LightBrown', 'LightYellow', 'LightGrey', 'LightPurple']
+OtherColors = ['Black', 'BlueMono', 'BluePurple', 'BrightColors', 'BrownBlue',
+               'HotDogStand', 'Green', 'GreenMono', 'GreenTan', 'NeutralBlue', 'Material1', 'Material2']
 
-f = open('themeStorage.txt', 'r')
-if f.mode == 'r':
-    storedTheme = f.read()
-sg.theme(f'{storedTheme}')
+menu_def = [['User Preferences', ['Select theme', ['Default',
+                                                   'Dark', DarkColors, 'Light', LightColors, 'Others', OtherColors]]]]
+
+home = str(Path.home())
+file_exists = os.path.exists(f"{home}/.guet/themeStorage.txt")
+
+# If the file exists, remove it from the directory
+if(file_exists):
+    f = open(f"{home}/.guet/themeStorage.txt", 'r')
+    if f.mode == 'r':
+        storedTheme = f.read()
+    sg.theme(f'{storedTheme}')
 
 
 @log_on_error
@@ -107,7 +122,7 @@ def main():
 
         if event in sg.theme_list():
             window.close()
-            file = open("themeStorage.txt", "w")
+            file = open(f"{home}/.guet/themeStorage.txt", "w")
             file.write("%s" % (str(event)))
             file.close()
             sg.theme(f'{str(event)}')
@@ -123,7 +138,7 @@ def main():
 
             Log_Format = "%(asctime)s  %(message)s"
 
-            logging.basicConfig(filename="logfile.log",
+            logging.basicConfig(filename=f"{home}/.guet/logfile.log",
                                 filemode="w",
                                 format=Log_Format,
                                 level=logging.ERROR)
@@ -136,7 +151,7 @@ def main():
 
             Log_Format = "%(asctime)s %(message)s "
 
-            logging.basicConfig(filename="logfile.log",
+            logging.basicConfig(filename=f"{home}/.guet/logfile.log",
                                 filemode="w",
                                 format=Log_Format,
                                 level=logging.ERROR)
