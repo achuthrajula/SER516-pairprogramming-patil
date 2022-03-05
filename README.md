@@ -41,9 +41,14 @@ $ init
 ### add
 
 Add a committer for commit tracking
+OR
+Add multiple committers for commit tracking at once
 
 ```
 $ add p1 "Person 1" person@example.com
+
+$ add p1 "Person 1" person1@example.com p2 "Person 2" person2@example.com 
+
 ```
 
 | Flag                        | Description                           |
@@ -85,9 +90,14 @@ Displays the data of tracked pair programming sessions
 ### remove
 
 Remove committer
+OR
+Remove multiple committers at once
 
 ```
 $ remove p1
+
+$ remove p1 p2 p3
+
 ```
 
 ### taiga-teammates
@@ -117,6 +127,14 @@ Set the pairing strategy by providing the pairing strategy and initials of both 
 
 $ pair clear-log
 Clears the log file containing the tracking data of pair programming sessions
+```
+
+### co-author
+Sets co-author in a comment for a task
+
+```
+$ co-author <username> <password> <Task-subject> <message for the co-author of the task>
+
 ```
 
 ### invite
