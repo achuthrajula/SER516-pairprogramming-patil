@@ -17,64 +17,121 @@ class PairCommittersAction(Action):
         self.home = str(Path.home())
 
     def execute(self, args: List[str]):
-        if args[0].lower() == "roles":
+        if args[0].lower() == "roles" or args[0].lower() == 'productivity':
             data = {"password": str(args[2]), "username": str(
                 args[1]), "type": "normal"}
             resp = requests.post('https://api.taiga.io/api/v1/auth', json=data)
-
+            print('Authentication: Done')
             token = ""
-            if resp.status_code != 200:
-                print("Error")
-            else:
-                token = format(resp.json()["auth_token"])
+            # print(resp, resp.status_code)
+            # if resp.status_code != 200:
+            #     print("Error")
+            # else:
+            #     token = format(resp.json()["auth_token"])
 
             data = {"AUTH_TOKEN": token}
 
             resp = requests.get(
                 "https://api.taiga.io/api/v1/projects/by_slug?slug=agiliyal-pairprogramming-patil-team-ser-516-project-1", json=data
             )
+            print('Fetching the project')
 
             for values in resp.json():
                 if values == "task_statuses":
                     for task_statuses in resp.json()["task_statuses"]:
                         project_id = str(task_statuses["project_id"])
+            if args[0].lower() == 'roles':
+                resp = requests.get(
+                    'https://api.taiga.io/api/v1/milestones?project='+project_id, json=data)
+                
+                sprint_id = 0
+                sprint_name = []
+                milestones_id = []
+                for values in resp.json():
+                    sprint_id = sprint_id + 1
+                    sprint_name.append(values["name"])
+                    milestones_id.append(values["id"])
+                sprint_option = int(args[3])
+                print(f"Selected sprint is {sprint_name[sprint_option]}\n")
+                current_sprint = milestones_id[sprint_option]
+                current_sprint_us = []
+                for values in resp.json():
+                    user_story_id = 0
 
-            resp = requests.get(
-                'https://api.taiga.io/api/v1/milestones?project='+project_id, json=data)
-            sprint_id = 0
-            sprint_name = []
-            milestones_id = []
-            for values in resp.json():
-                sprint_id = sprint_id + 1
-                sprint_name.append(values["name"])
-                milestones_id.append(values["id"])
-            sprint_option = int(args[3])
-            print(f"Selected sprint is {sprint_name[sprint_option]}\n")
-            current_sprint = milestones_id[sprint_option]
-            current_sprint_us = []
-            for values in resp.json():
-                user_story_id = 0
+                    for us in values["user_stories"]:
+                        if us["milestone"] == current_sprint:
+                            current_sprint_us.append(str(us["subject"]))
+                            user_story_id = user_story_id + 1
+                user_story_option = int(args[4])
+                print(
+                    f'selected user story is {current_sprint_us[user_story_option]}n')
+                resp = requests.get(
+                    "https://api.taiga.io/api/v1/projects/by_slug?slug=agiliyal-pairprogramming-patil-team-ser-516-project-1", json=data
+                )
+                member_id = []
+                member_names = []
+                for values in resp.json():
+                    if values == "members":
+                        print("The team members are - ")
+                        for members in resp.json()["members"]:
+                            member_id.append(members["id"])
+                            member_names.append(members["full_name"])
+                            print(members["full_name_display"] +
+                                ": " + members["role_name"])
+            else:
+                resp = requests.get(
+                    "https://api.taiga.io/api/v1/milestones?project=" + project_id, json=data
+                    )
+                print('Analyzing data')
+                sprint_id = 0
+                sprint_name = []
+                milestones_id = []
+                user_stories = {}
+                sprint_list = []
+                for values in resp.json():
+                    sprint_id = sprint_id + 1
+                    sprint_name.append(values["name"])
+                    milestones_id.append(values["id"])
 
-                for us in values["user_stories"]:
-                    if us["milestone"] == current_sprint:
-                        current_sprint_us.append(str(us["subject"]))
-                        user_story_id = user_story_id + 1
-            user_story_option = int(args[4])
-            print(
-                f'selected user story is {current_sprint_us[user_story_option]}n')
-            resp = requests.get(
-                "https://api.taiga.io/api/v1/projects/by_slug?slug=agiliyal-pairprogramming-patil-team-ser-516-project-1", json=data
-            )
-            member_id = []
-            member_names = []
-            for values in resp.json():
-                if values == "members":
-                    print("The team members are - ")
-                    for members in resp.json()["members"]:
-                        member_id.append(members["id"])
-                        member_names.append(members["full_name"])
-                        print(members["full_name_display"] +
-                              ": " + members["role_name"])
+                vk = 0
+                ag = 0
+                ar = 0
+                sp = 0
+
+                for sprint_id in milestones_id:
+                    task_resp = requests.get(
+                        "https://api.taiga.io/api/v1/tasks?project="
+                        + str(project_id)
+                        + "&milestone="
+                        + str(sprint_id),
+                        json=data,
+                    )
+                    for values in task_resp.json():
+                        if values["assigned_to_extra_info"] is None:
+                            full_name_display = "None"
+                        else:
+                            for assigned_to_extra_info in values["assigned_to_extra_info"]:
+                                assignedTo = values["assigned_to_extra_info"]
+                                full_name_display = assignedTo["full_name_display"]
+
+                            if full_name_display == "Varshik Sonti":
+                                vk += 1
+                            elif full_name_display == "Achuth Reddy Rajula ":
+                                ar += 1
+                            elif full_name_display == "Shivani Sanjay Patil":
+                                sp += 1
+                            elif full_name_display == "Apoorva Giliyal":
+                                ag += 1
+
+                best_pair = {
+                    "Varshik Sonti": vk,
+                    "Achuth Rajula": ar,
+                    "Shivani Patil": sp,
+                    "Apoorva Giliyal": ag,
+                }
+                my_keys = sorted(best_pair, key=best_pair.get, reverse=True)[:2]
+                print('Top contributors are:')
+                print(my_keys)
 
         elif args[0] == "clear-log":
             file = open(f"{self.home}/.guet/logfile.log", "r+")
