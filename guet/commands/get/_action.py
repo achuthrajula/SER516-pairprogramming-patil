@@ -1,9 +1,9 @@
-import PySimpleGUI as sg
-from pickle import NONE
 from typing import List
+from pathlib import Path
+
 
 from guet.committers import Committers2 as Committers
-from guet.committers import CommittersPrinter, CurrentCommitters
+from guet.committers import CurrentCommitters
 from guet.steps.action import Action
 
 
@@ -15,6 +15,7 @@ class GetCommittersAction(Action):
         super().__init__()
         self.committers = committers
         self.current = current_committers
+        self.home = str(Path.home())
 
     def execute(self, args: List[str]):
         if args[0] == 'all':
@@ -33,7 +34,7 @@ class GetCommittersAction(Action):
             else:
                 print(f"guet: {pre_print} {committers}")
         elif args[0] == 'pair-log':
-            file_name = "logfile.log"
+            file_name = f"{self.home}/.guet/logfile.log"
             file = open(file_name, "r")
             data = []
             order = ["date", "message", "committers"]
@@ -41,8 +42,9 @@ class GetCommittersAction(Action):
             for line in file.readlines():
                 details = line.split("|")
                 details = [x.strip() for x in details]
-                structure = {key:value for key, value in zip(order, details)}
+                structure = {key: value for key, value in zip(order, details)}
                 data.append(structure)
 
             for log in data:
-                print(f"{log['message']} by {log['committers']} at {log['date']}")
+                print(
+                    f"{log['message']} by {log['committers']} at {log['date']}")

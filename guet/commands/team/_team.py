@@ -1,9 +1,9 @@
 import json
 import requests
-from pickle import NONE
 from typing import List
 
 from guet.steps.action import Action
+
 
 class GetTaigaTeammates(Action):
 
@@ -23,7 +23,7 @@ class GetTaigaTeammates(Action):
             "password": args[1],
             "type": "normal"
         })
-        
+
         headers = {
             'Content-Type': 'application/json'
         }
@@ -73,5 +73,5 @@ class GetTaigaTeammates(Action):
             teammates.append(name)
 
         print('Fetching teammates from project: Done\n')
-  
+
         print("Teammates: ", teammates)
