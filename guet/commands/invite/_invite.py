@@ -1,11 +1,13 @@
-import os 
+import os
 from _path import ROOT_DIR
 from typing import List
-import smtplib, ssl
+import smtplib
+import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from guet.steps.action import Action
+
 
 class SendInvite(Action):
     def __init__(self):
@@ -50,7 +52,7 @@ class SendInvite(Action):
 
     def execute(self, args: List[str]):
 
-        try: 
+        try:
             # Check if the file exists
             file_exists = os.path.exists(ROOT_DIR + "/invite.md")
 
@@ -87,13 +89,13 @@ class SendInvite(Action):
                 self.sender_password = args[1]
                 self.receiver_email = args[2]
 
-            # A where the user has provided his/her credentials and custom message 
+            # A where the user has provided his/her credentials and custom message
             elif len(args) == 4:
                 self.sender_email = args[0]
                 self.sender_password = args[1]
                 self.receiver_email = args[2]
                 self.email_message = args[3]
-            
+
             else:
                 pass
 
@@ -101,7 +103,7 @@ class SendInvite(Action):
             # Handle exception and notify user
             print(f"Email service command failed due to: {e}")
 
-        else: 
+        else:
             # Fill email body
             message = MIMEMultipart("alternative")
             message["Subject"] = "Open invitation to collaborate"
