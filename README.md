@@ -10,10 +10,14 @@ Pair programming is integral part of many software development lifecycles. When 
 
 ## Installation
 
-**guet** can be installed from [pypi](https://pypi.org/project/guet/):
+**guet** should be installed locally:
 
+After cloning this repository run the following commands from the root directory of the repository
 ```
-pip3 install guet
+sudo python3 setup.py develop
+```
+```
+pip3 install -r requirements.txt
 ```
 
 ## Usage
@@ -172,14 +176,3 @@ $ yeet
 | Flag                        | Description                           |
 | --------------------------- | ------------------------------------  |
 | --global / -g               | Remove guet configuration from home directory
-
-
-## Questions
-
-There is a [frequently asked questions](.github/FAQ.md) section with some commonly asked questions.
-
-## Contribution
-
-Guidelines for contributions can be found [here](./.github/CONTRIBUTING.md). Feel free to
-[open an issue](https://github.com/chiptopher/guet/issues) if there are problems with **guet** or you want to submit a
-feature request.
